@@ -7,10 +7,13 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "MacDown-Swift.h"
 
 @interface MPEditorView : NSTextView
 
 @property BOOL scrollsPastEnd;
+@property VimModeHelper *helper;
+
 - (NSRect)contentRect;
 
 @end

@@ -124,6 +124,18 @@ NS_INLINE BOOL MPAreRectsEqual(NSRect r1, NSRect r2)
         [self updateContentGeometry];
 }
 
+- (void) keyDown:(NSEvent *)event
+{
+    if (![self.helper ayylmaoWithEvent:event t:self] )
+    {
+        [super keyDown:event];
+    }
+}
+
+- (void) awakeFromNib
+{
+    _helper = [[VimModeHelper alloc] init];
+}
 
 #pragma mark - Private
 
