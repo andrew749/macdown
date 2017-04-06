@@ -126,7 +126,7 @@ NS_INLINE BOOL MPAreRectsEqual(NSRect r1, NSRect r2)
 
 - (void) keyDown:(NSEvent *)event
 {
-    if (![self.helper ayylmaoWithEvent:event t:self] )
+    if (![self.helper handleKeyWithEvent:event t:self] )
     {
         [super keyDown:event];
     }
