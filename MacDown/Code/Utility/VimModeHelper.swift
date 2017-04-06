@@ -12,9 +12,9 @@ import Carbon
 
 @objc class VimModeHelper: NSObject {
     
-    let functionKeyMappings:[KEYCODE: (NSTextView)-> ()]
     let symToKeyCode:[Int: KEYCODE]
     var currentMode:Mode = Mode.INSERT
+    let matcher: Matcher<(NSTextView) ->()>
     
     // logical codes we use in our own mappings
     enum KEYCODE {
@@ -27,6 +27,8 @@ import Carbon
         case O_CODE
         case W_CODE
         case B_CODE
+        case G_CODE
+        case SHIFT_CODE
         case ZERO_CODE
         case DOLLAR_SIGN_CODE
         case NOT_SPECIAL
@@ -69,33 +71,35 @@ import Carbon
             kVK_ANSI_L: KEYCODE.L_CODE,
             kVK_ANSI_K: KEYCODE.K_CODE,
             kVK_ANSI_O: KEYCODE.O_CODE,
+            kVK_ANSI_G: KEYCODE.G_CODE,
             kVK_ANSI_0: KEYCODE.ZERO_CODE,
             kVK_ANSI_W: KEYCODE.W_CODE,
             kVK_ANSI_B: KEYCODE.B_CODE,
+            kVK_Shift: KEYCODE.SHIFT_CODE,
+            kVK_RightShift: KEYCODE.SHIFT_CODE,
             kVK_Escape: KEYCODE.ESCAPE_KEY
         ]
-        functionKeyMappings = [
-            KEYCODE.H_CODE : VimModeHelper.moveLeft,
-            KEYCODE.J_CODE : VimModeHelper.moveDown,
-            KEYCODE.K_CODE : VimModeHelper.moveUp,
-            KEYCODE.L_CODE : VimModeHelper.moveRight,
-            KEYCODE.O_CODE : VimModeHelper.newLineBelow,
-            KEYCODE.W_CODE : VimModeHelper.moveForwardWord,
-            KEYCODE.B_CODE : VimModeHelper.moveBackwardWord,
-            KEYCODE.ZERO_CODE: VimModeHelper.moveToBeginningOfLine,
-        ]
-        super.init()
         
+        matcher = Matcher()
+        
+        // commands that we have so far
+        matcher.register(commands:[KEYCODE.H_CODE] , action: VimModeHelper.moveLeft)
+        matcher.register(commands: [KEYCODE.J_CODE], action: VimModeHelper.moveDown)
+        matcher.register(commands: [KEYCODE.K_CODE], action: VimModeHelper.moveUp)
+        matcher.register(commands: [KEYCODE.L_CODE], action: VimModeHelper.moveRight)
+        matcher.register(commands: [KEYCODE.O_CODE], action: VimModeHelper.newLineBelow)
+        matcher.register(commands: [KEYCODE.W_CODE], action: VimModeHelper.moveForwardWord)
+        matcher.register(commands: [KEYCODE.B_CODE], action: VimModeHelper.moveBackwardWord)
+        matcher.register(commands: [KEYCODE.ZERO_CODE], action: VimModeHelper.moveToBeginningOfLine)
+        matcher.register(commands: [KEYCODE.G_CODE, KEYCODE.G_CODE], action: VimModeHelper.topOfPage)
+        matcher.register(commands: [KEYCODE.SHIFT_CODE, KEYCODE.G_CODE], action: VimModeHelper.endOfPage)
+        
+        super.init()
     }
     
     private func getKeyCode(code: Int) -> KEYCODE?
     {
         return self.symToKeyCode[code]
-    }
-    
-    private func getActionForKeycode(keyCode: KEYCODE) -> ((NSTextView) -> ())?
-    {
-        return functionKeyMappings[keyCode]
     }
     
     public func handleKey(event: NSEvent, t: NSTextView) -> Bool
@@ -122,7 +126,7 @@ import Carbon
         // if in mapping
         if (currentMode == Mode.NORMAL)
         {
-            if let lambda = getActionForKeycode(keyCode: keyCode)
+            if let lambda = matcher.consume(token: keyCode)
             {
                 print("Running action")
                 lambda(t)
@@ -183,11 +187,11 @@ import Carbon
         t.moveWordBackward(t)
     }
     
-    func topOfPage(t: NSTextView) {
+    static func topOfPage(t: NSTextView) {
         t.moveToBeginningOfDocument(t)
     }
     
-    func endOfPage(t: NSTextView) {
+    static func endOfPage(t: NSTextView) {
         t.moveToEndOfDocument(t)
     }
 }

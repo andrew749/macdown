@@ -85,6 +85,7 @@
 		905EF1B7196164F300FC3CE9 /* macdown in Copy Command Line Utility */ = {isa = PBXBuildFile; fileRef = 905EF1A7196164CA00FC3CE9 /* macdown */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B024AF171E4ABA9800B4038D /* VimModeHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B024AF161E4ABA9800B4038D /* VimModeHelper.swift */; };
 		B0476BC01E8EE21A00DE24CB /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0476BBF1E8EE21A00DE24CB /* Carbon.framework */; };
+		B06E2FFC1E967FAE00935381 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06E2FFB1E967FAE00935381 /* Node.swift */; };
 		B0EED1A01E960CF00066AB2C /* Matcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0EED19F1E960CF00066AB2C /* Matcher.swift */; };
 		B5C5C1666A506FEA86435D25 /* libPods-macdown-cmd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 263367245B2D78A42C2F19D7 /* libPods-macdown-cmd.a */; };
 		EBFE3157737058F5A63699C8 /* libPods-MacDownTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C949FDE45493AE77DAD9BF4 /* libPods-MacDownTests.a */; };
@@ -279,6 +280,7 @@
 		B024AF151E4ABA9700B4038D /* MacDown-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MacDown-Bridging-Header.h"; sourceTree = "<group>"; };
 		B024AF161E4ABA9800B4038D /* VimModeHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VimModeHelper.swift; sourceTree = "<group>"; };
 		B0476BBF1E8EE21A00DE24CB /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		B06E2FFB1E967FAE00935381 /* Node.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
 		B0EED19F1E960CF00066AB2C /* Matcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Matcher.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -352,6 +354,7 @@
 				1F23A92019928E650052DB78 /* MPMathJaxListener.m */,
 				B024AF161E4ABA9800B4038D /* VimModeHelper.swift */,
 				B0EED19F1E960CF00066AB2C /* Matcher.swift */,
+				B06E2FFB1E967FAE00935381 /* Node.swift */,
 				1F5A370E1C868EC0006E63E7 /* MPPlugIn.h */,
 				1F5A370F1C868EC0006E63E7 /* MPPlugIn.m */,
 				1F0D9D63194AC7CF008E1856 /* MPUtilities.h */,
@@ -974,6 +977,7 @@
 				1F33F2A41A3B56D20001C849 /* NSColor+HTML.m in Sources */,
 				1F5A37141C869C81006E63E7 /* MPPlugInController.m in Sources */,
 				1F0D9D65194AC7CF008E1856 /* NSString+Lookup.m in Sources */,
+				B06E2FFC1E967FAE00935381 /* Node.swift in Sources */,
 				1F8A835E1953454F00B6BF69 /* HGMarkdownHighlightingStyle.m in Sources */,
 				1F33F2A11A3B4B660001C849 /* MPDocumentSplitView.m in Sources */,
 				1F23A92119928E650052DB78 /* MPMathJaxListener.m in Sources */,
