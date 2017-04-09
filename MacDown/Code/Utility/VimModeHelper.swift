@@ -140,6 +140,8 @@ import Carbon
         matcher.register(commands: [KEYCODE.A_CODE], action: VimModeHelper.appendCommand)
         matcher.register(commands: [KEYCODE.U_CODE], action: VimModeHelper.undo)
         matcher.register(commands: [KEYCODE.CONTROL_CODE, KEYCODE.R_CODE], action: VimModeHelper.redo)
+        matcher.register(commands: [KEYCODE.CONTROL_CODE, KEYCODE.D_CODE], action:VimModeHelper.moveForwardFractionPage)
+        matcher.register(commands: [KEYCODE.CONTROL_CODE, KEYCODE.U_CODE], action: VimModeHelper.moveBackwardFractionPage)
         
         super.init()
     }
@@ -197,7 +199,6 @@ import Carbon
             
             if let lambda = matcher.consume(token: keyCode)
             {
-                print("Running action")
                 lambda(t)
             }
             
@@ -244,12 +245,14 @@ import Carbon
         t.moveToLeftEndOfLine(t)
     }
     
-    func moveForwardFractionPage(t: NSTextView) {
+    static func moveForwardFractionPage(t: NSTextView) {
         //TODO: need special logic
+        t.scrollPageDown(t)
     }
     
-    func moveBackwardFractionPage(t: NSTextView) {
+    static func moveBackwardFractionPage(t: NSTextView) {
         //TODO: need special logic
+        t.scrollPageUp(t)
     }
     
     static func moveForwardWord(t: NSTextView) {

@@ -24,8 +24,7 @@ class Matcher<V>
         for command in commands
         {
             let child = Node<V>(v: command)
-            currentPointer.addChild(node: child)
-            currentPointer = child
+            currentPointer = currentPointer.addChild(node: child)
         }
         
         currentPointer.setCommand(command: action)

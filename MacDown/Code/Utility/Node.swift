@@ -25,15 +25,20 @@ class Node<V>
         children = [:]
     }
     
-    func addChild(node: Node)
+    func addChild(node: Node) -> Node
     {
-        if let v = node.value
+        assert (node.value != nil)
+        
+        let v = node.value!
+        
+        // make sure we don't double add
+        if (self.children[v] == nil)
         {
-            // make sure we don't double add
-            assert(self.children[v] == nil)
-            
             self.children[v] = node
         }
+        
+        return self.children[v]!
+        
     }
     
     func getChild(k: VimModeHelper.KEYCODE) -> Node?
