@@ -19,19 +19,32 @@ import Carbon
     // logical codes we use in our own mappings
     enum KEYCODE {
         case ESCAPE_KEY
+        case A_CODE
+        case B_CODE
+        case C_CODE
+        case D_CODE
+        case E_CODE
+        case F_CODE
+        case G_CODE
         case H_CODE 
         case I_CODE
         case J_CODE
         case K_CODE
         case L_CODE
+        case M_CODE
+        case N_CODE
         case O_CODE
-        case W_CODE
-        case D_CODE
-        case B_CODE
-        case X_CODE
-        case G_CODE
-        case A_CODE
+        case P_CODE
+        case Q_CODE
+        case R_CODE
+        case S_CODE
+        case T_CODE
         case U_CODE
+        case V_CODE
+        case W_CODE
+        case X_CODE
+        case Y_CODE
+        case Z_CODE
         case SHIFT_CODE
         case COMMAND_CODE
         case CONTROL_CODE
@@ -103,6 +116,7 @@ import Carbon
             kVK_ANSI_X: KEYCODE.X_CODE,
             kVK_ANSI_A: KEYCODE.A_CODE,
             kVK_ANSI_U: KEYCODE.U_CODE,
+            kVK_ANSI_R: KEYCODE.R_CODE,
             kVK_Shift: KEYCODE.SHIFT_CODE,
             kVK_RightShift: KEYCODE.SHIFT_CODE,
             kVK_Escape: KEYCODE.ESCAPE_KEY
@@ -125,6 +139,7 @@ import Carbon
         matcher.register(commands: [KEYCODE.X_CODE], action: VimModeHelper.deleteUnderMouse)
         matcher.register(commands: [KEYCODE.A_CODE], action: VimModeHelper.appendCommand)
         matcher.register(commands: [KEYCODE.U_CODE], action: VimModeHelper.undo)
+        matcher.register(commands: [KEYCODE.CONTROL_CODE, KEYCODE.R_CODE], action: VimModeHelper.redo)
         
         super.init()
     }
@@ -264,6 +279,8 @@ import Carbon
         t.deleteToBeginningOfLine(t)
         t.deleteToEndOfLine(t)
         t.setSelectedRange(NSMakeRange(t.selectedRange.location, 1))
+        
+        // special handling of the extra newline
         t.delete(t)
         t.setSelectedRange(NSMakeRange(t.selectedRange.location, 1))
     }
@@ -276,5 +293,10 @@ import Carbon
     static func undo(t:NSTextView)
     {
         t.undoManager?.undo()
+    }
+    
+    static func redo(t:NSTextView)
+    {
+        t.undoManager?.redo()
     }
 }
