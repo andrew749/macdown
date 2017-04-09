@@ -26,9 +26,16 @@ import Carbon
         case L_CODE
         case O_CODE
         case W_CODE
+        case D_CODE
         case B_CODE
+        case X_CODE
         case G_CODE
+        case A_CODE
+        case U_CODE
         case SHIFT_CODE
+        case COMMAND_CODE
+        case CONTROL_CODE
+        case OPTION_CODE
         case ZERO_CODE
         case DOLLAR_SIGN_CODE
         case NOT_SPECIAL
@@ -42,14 +49,31 @@ import Carbon
         case VISUAL_BLOCK
     }
     
-    func enterInsertMode(){
+    func enterInsertMode(t:NSTextView){
         print("Entering insert mode")
         currentMode = Mode.INSERT
+        t.setSelectedRange(NSMakeRange(t.selectedRange.location, 0))
     }
     
-    func enterNormalMode(){
+    func enterNormalMode(t:NSTextView){
         print("Entering normal mode")
         currentMode = Mode.NORMAL
+        t.setSelectedRange(NSMakeRange(t.selectedRange.location, 1))
+    }
+    
+    func isNormalMode() ->Bool
+    {
+        return currentMode == Mode.NORMAL
+    }
+    
+    func isInsertMode() -> Bool
+    {
+        return currentMode == Mode.INSERT
+    }
+    
+    func isNormalToggle(k: KEYCODE) -> Bool
+    {
+        return k == KEYCODE.ESCAPE_KEY
     }
     
     func enterVisualMode() {
@@ -75,6 +99,10 @@ import Carbon
             kVK_ANSI_0: KEYCODE.ZERO_CODE,
             kVK_ANSI_W: KEYCODE.W_CODE,
             kVK_ANSI_B: KEYCODE.B_CODE,
+            kVK_ANSI_D: KEYCODE.D_CODE,
+            kVK_ANSI_X: KEYCODE.X_CODE,
+            kVK_ANSI_A: KEYCODE.A_CODE,
+            kVK_ANSI_U: KEYCODE.U_CODE,
             kVK_Shift: KEYCODE.SHIFT_CODE,
             kVK_RightShift: KEYCODE.SHIFT_CODE,
             kVK_Escape: KEYCODE.ESCAPE_KEY
@@ -93,6 +121,10 @@ import Carbon
         matcher.register(commands: [KEYCODE.ZERO_CODE], action: VimModeHelper.moveToBeginningOfLine)
         matcher.register(commands: [KEYCODE.G_CODE, KEYCODE.G_CODE], action: VimModeHelper.topOfPage)
         matcher.register(commands: [KEYCODE.SHIFT_CODE, KEYCODE.G_CODE], action: VimModeHelper.endOfPage)
+        matcher.register(commands: [KEYCODE.D_CODE, KEYCODE.D_CODE], action: VimModeHelper.deleteLine)
+        matcher.register(commands: [KEYCODE.X_CODE], action: VimModeHelper.deleteUnderMouse)
+        matcher.register(commands: [KEYCODE.A_CODE], action: VimModeHelper.appendCommand)
+        matcher.register(commands: [KEYCODE.U_CODE], action: VimModeHelper.undo)
         
         super.init()
     }
@@ -109,28 +141,53 @@ import Carbon
         }
         
         // handle the event normally if in insert mode
-        if currentMode == Mode.INSERT &&
-            keyCode == KEYCODE.ESCAPE_KEY
+        if self.isInsertMode() &&
+            self.isNormalToggle(k: keyCode)
         {
-            enterNormalMode()
+            enterNormalMode(t: t)
             return true
         }
         
-        if currentMode == Mode.NORMAL &&
-            keyCode == KEYCODE.I_CODE
+        if self.isNormalMode() &&
+            (keyCode == KEYCODE.I_CODE || keyCode == KEYCODE.A_CODE
+                )
         {
-            enterInsertMode();
+            enterInsertMode(t: t);
+            
             return true
         }
         
         // if in mapping
-        if (currentMode == Mode.NORMAL)
+        if (isNormalMode())
         {
+            if event.modifierFlags.contains(NSShiftKeyMask)
+            {
+                matcher.consume(token: KEYCODE.SHIFT_CODE)
+            }
+            
+            if event.modifierFlags.contains(NSCommandKeyMask)
+            {
+                matcher.consume(token: KEYCODE.COMMAND_CODE)
+            }
+            
+            if event.modifierFlags.contains(NSControlKeyMask)
+            {
+                matcher.consume(token: KEYCODE.CONTROL_CODE)
+            }
+            
+            if event.modifierFlags.contains(NSAlternateKeyMask)
+            {
+                matcher.consume(token: KEYCODE.OPTION_CODE)
+            }
+            
             if let lambda = matcher.consume(token: keyCode)
             {
                 print("Running action")
                 lambda(t)
             }
+            
+            // need to fix
+            t.setSelectedRange(NSMakeRange(t.selectedRange.location, 1))
             return true
         }
         
@@ -151,6 +208,7 @@ import Carbon
     }
     
     static func moveLeft(t:NSTextView) {
+        t.moveLeft(t);
         t.moveLeft(t);
     }
     
@@ -193,5 +251,30 @@ import Carbon
     
     static func endOfPage(t: NSTextView) {
         t.moveToEndOfDocument(t)
+    }
+    
+    static func deleteUnderMouse(t:NSTextView)
+    {
+        t.delete(t)
+    }
+    
+    static func deleteLine(t: NSTextView)
+    {
+        t.setSelectedRange(NSMakeRange(t.selectedRange.location, 0))
+        t.deleteToBeginningOfLine(t)
+        t.deleteToEndOfLine(t)
+        t.setSelectedRange(NSMakeRange(t.selectedRange.location, 1))
+        t.delete(t)
+        t.setSelectedRange(NSMakeRange(t.selectedRange.location, 1))
+    }
+    
+    static func appendCommand(t: NSTextView)
+    {
+        t.moveRight(t)
+    }
+    
+    static func undo(t:NSTextView)
+    {
+        t.undoManager?.undo()
     }
 }
